@@ -11,3 +11,11 @@ liamkf2004@gmail.com
 Kadir Cimen 
 
 muci1000@stud.ek.dk
+
+Anton
+
+anro1003@stud.ek.dk
+
+Christian
+
+Kriller2868@gmail.com
