@@ -1,0 +1,110 @@
+@startuml
+class Main{
++{static} void main (String[] args)
+}
+
+enum BrowseOptions{
+BROWSE_ALL
+BROWSE_WATCHED
+BROWSE_SAVED
+EXIT
+}
+
+enum Categories{
+ACTION
+ADVENTURE
+ANIMATION
+BIOGRAPHY
+COMEDY
+CRIME
+DOCUMENTARY
+DRAMA
+FAMILY
+FANTASY
+FILM-NOIR
+HISTORY
+HORROR
+MUSIC
+MUSICAL
+MYSTERY
+ROMANCE
+SCI-FI
+SPORT
+TALK-SHOW
+THRILLER
+WAR
+WESTERN
+}
+
+class TextUI{
+- StreamingService streamingService
+- Scanner input
++ void displayUI()
+- void showBrowseOptions()
++ void exitStreamingService()
+
+}
+
+class User{
+- String username
+- ArrayList<Media> watchList
+- ArrayList<Media> savedList
+}
+
+abstract class Media{
+- String title
+- ArrayList<Category> categories
+- Double rating
++ int getInitialReleaseYear()
+}
+
+class Movie{
+- int releaseYear
+}
+
+class Series{
+- ArrayList<Season> seasons
+}
+
+class Season{
+- int seasonNumber
+- ArrayList<Episode> episodes
+}
+
+class Episode{
+- int number
+}
+
+class FileIO {
++{static} void writeData(String path, String data, boolean append)
++{static} String readData(String path)
+}
+
+class StreamingService{
+- String name
+- ArrayList<User> users
+- ArrayList<Media> media
+- User currentUser
++ void registerUser(String username, String password)
++ boolean login(String username, String password)
+
+}
+
+
+
+Main ..> TextUI:uses
+TextUI *-- StreamingService
+StreamingService *-- "0..*" User
+
+StreamingService ..> FileIO:uses
+
+StreamingService *-- "0..*" Media
+Media <|-- Movie
+Media <|-- Series
+
+Series *-- "0..*" Season
+Season *-- "0..*" Episode
+
+TextUI <.. BrowseOptions
+Media *-- Categories
+@enduml
