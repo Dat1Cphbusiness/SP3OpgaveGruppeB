@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/sequence-diagram'
+
+object StreamingService
+
+object User
+
+object Media
+object Movie
+object Series
+object Season
+object Episode
+object Category
+
+interface TextUI
+
+object FileIO
+
+TextUI o-- StreamingService:has-a
+StreamingService *-- "0..*" User
+StreamingService *-- "0..*" Media
+User o-- "0..*" Media:Watched
+User o-- "0..*" Media:Saved
+
+Media <|-- Movie:is-a
+Media <|-- Series:is-a
+Series *-- "1..*" Season
+Season *-- "1..*" Episode
+Media o-- "1..*" Category
+
+StreamingService ..> FileIO:Uses
+
+
+
+
+@enduml
