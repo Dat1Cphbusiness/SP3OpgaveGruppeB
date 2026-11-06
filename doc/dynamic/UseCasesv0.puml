@@ -27,11 +27,13 @@ UC3 --> UC9
 UC2 --> UC9
 
 
+
 UC4 --> UC6
+
 UC4 <--> UC5
 UC5 --> UC6
-UC7 <--> UC5
-UC8 <--> UC5
+UC7 --> UC5
+UC8 --> UC5
 UC8 --> UC6
 
 UC8 --> UC10

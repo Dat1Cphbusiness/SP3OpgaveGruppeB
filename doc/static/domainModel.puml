@@ -12,7 +12,7 @@ object Season
 object Episode
 object Category
 
-interface TextUI
+class TextUI
 
 object FileIO
 
@@ -24,8 +24,8 @@ User o-- "0..*" Media:Saved
 
 Media <|-- Movie:is-a
 Media <|-- Series:is-a
-Series *-- "1..*" Season
-Season *-- "1..*" Episode
+Series *-- "0..*" Season
+Season *-- "0..*" Episode
 Media o-- "1..*" Category
 
 StreamingService ..> FileIO:Uses
