@@ -10,4 +10,5 @@ public class Movie extends Media {
     public void play () {
         System.out.println(getTitle() + " afspilles nu...");
     }
+
 }

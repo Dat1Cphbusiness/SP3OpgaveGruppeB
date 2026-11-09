@@ -4,4 +4,5 @@ public enum BrowseOptions {
     BROWSE_WATCHED,
     BROWSE_SAVED,
     LOGOUT
+
 }
