@@ -14,6 +14,12 @@ public class User {
         this.savedList = new ArrayList<>();
     }
 
+    public User(String username) {
+        this.username = username;
+        this.watchList = new ArrayList<String>();
+        this.savedList = new ArrayList<String>();
+    }
+
     public String getUsername() {
         return username;
     }
