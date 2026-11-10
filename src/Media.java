@@ -1,39 +1,45 @@
+
 import java.util.ArrayList;
 
 public abstract class Media {
 
     private String title;
     private int releaseYear;
-    private double rating;
     private ArrayList<Category> categories;
+    private double rating;
 
-    public Media (String title, int releaseYear, double rating,ArrayList<Category> categories){
+    public Media(String title, int releaseYear,
+                 ArrayList<Category> categories, double rating) {
+
         this.title = title;
         this.releaseYear = releaseYear;
-        this.rating = rating;
         this.categories = categories;
+        this.rating = rating;
     }
 
-    public String getTitle () {
+    public String getTitle() {
         return title;
     }
 
-    public int getInitialReleaseYear () {
+    public int getInitialReleaseYear() {
         return releaseYear;
     }
 
-    public double getRating () {
-        return rating;
-    }
-
-    public ArrayList<Category> getCategories () {
+    public ArrayList<Category> getCategories() {
         return categories;
     }
 
-    @Override
-    public String toString () {
-        return title + " (" + releaseYear + ") - Rating: " + rating;
+    public double getRating() {
+        return rating;
     }
 
+    public boolean hasCategory(Category category) {
+        return categories.contains(category);
+    }
 
+    @Override
+    public String toString() {
+
+        return title + " (" + releaseYear + ") - Rating: " + rating;
+    }
 }
