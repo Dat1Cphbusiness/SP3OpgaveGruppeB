@@ -46,6 +46,7 @@ public void exitStreamingService(){
     input.close();
     shutdown = true;
     System.out.println("StreamingService has been shutdown");
+    System.exit(0);
 }
 
 }
