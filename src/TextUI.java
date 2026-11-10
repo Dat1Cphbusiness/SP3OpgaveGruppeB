@@ -1,12 +1,16 @@
 import java.util.Scanner;
 
 public class TextUI {
-private StreamingService streamingService;
+private final StreamingService streamingService;
 private Scanner input = new Scanner(System.in);
 
 boolean shutdown = false;
 
-private void showBrowseOptions(){
+public TextUI () {
+    this.streamingService = new StreamingService();
+}
+
+    private void showBrowseOptions(){
 
 }
 
@@ -23,7 +27,6 @@ public void displayUI() {
         switch (userInput) {
             case "1":
                 System.out.println("Here is available users");
-                //logic
                 break;
             case "2":
                 System.out.println("Insert username, then password");

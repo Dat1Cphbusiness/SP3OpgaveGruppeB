@@ -3,6 +3,7 @@ public class Main {
 
     void main(String[] args){
         textUI.displayUI();
+
     }
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_26">
-    <output url="file:///production/SP3OpgaveGruppeB" />
+    <output url="file://$MODULE_DIR$/out" />
     <output-test url="file:///test/SP3OpgaveGruppeB" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
