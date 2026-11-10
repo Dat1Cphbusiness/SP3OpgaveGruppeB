@@ -1,4 +1,4 @@
-import Helpers.FileIO;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -20,6 +20,9 @@ public class StreamingService {
         media = new ArrayList<>();
         loadMediaData();
         loadUsers();
+        if (!new File(USERS_PATH).exists()) {
+            saveUsers();
+        }
     }
 
     // ------------------------------
@@ -38,6 +41,7 @@ public class StreamingService {
         currentUser = newUser;
         saveUsers();
         return true;
+
     }
 
     public boolean login(String username, String password) {
@@ -103,7 +107,7 @@ public class StreamingService {
             return;
         }
         item.play();
-        currentUser.addWatchedMedia(item);
+        currentUser.watchMedia(item.getTitle());
         saveUserData();
     }
 
@@ -114,7 +118,7 @@ public class StreamingService {
         if (currentUser == null) {
             return;
         }
-        currentUser.addSavedMedia(item);
+        currentUser.saveMedia(item.getTitle());
         saveUserData();
     }
 
@@ -122,7 +126,7 @@ public class StreamingService {
         if (currentUser == null) {
             return;
         }
-        currentUser.removeSavedMedia(item);
+        currentUser.unsaveMedia(item.getTitle());
         saveUserData();
     }
 
@@ -185,7 +189,7 @@ public class StreamingService {
                 try {
                     String title = parts[0].trim();
                     String yearText = parts[1].trim();
-                    Matcher yearMatcher = Patteren.compile("\\d{4}").matcher(yearText);
+                    Matcher yearMatcher = Pattern.compile("\\d{4}").matcher(yearText);
 
                     if(!yearMatcher.find()) {
                         continue;
@@ -207,7 +211,7 @@ public class StreamingService {
                         int seasonNumber = Integer.parseInt(matcher.group(1));
                         int episodeNumber = Integer.parseInt(matcher.group(2));
                         Season season = new Season (seasonNumber);
-                        for (int i = 1; i <= episodeCount; i++) {
+                        for (int i = 1; i <= episodeNumber; i++) {
                             season.addEpisode(new Episode(i));
                         }
                         series.addSeason(season);
@@ -289,16 +293,16 @@ public class StreamingService {
         saveUsers();
         StringBuilder data = new StringBuilder();
         for (User user : users) {
-            for (Media item : user.getWatchList()) {
+            for (String item : user.getWatchList()) {
                 data.append(user.getUsername())
                         .append(";WATCHED;")
-                        .append(item.getTitle())
+                        .append(item)
                         .append(System.lineSeparator());
             }
-            for (Media item : user.getSavedList()) {
+            for (String item : user.getSavedList()) {
                 data.append(user.getUsername())
                         .append(";SAVED;")
-                        .append(item.getTitle())
+                        .append(item)
                         .append(System.lineSeparator());
             }
         }
@@ -341,9 +345,9 @@ public class StreamingService {
                     continue;
                 }
                 if (listType.equals("WATCHED")) {
-                    user.addWatchedMedia(item);
+                    user.watchMedia(item.getTitle());
                 } else if (listType.equals("SAVED")) {
-                    user.addSavedMedia(item);
+                    user.saveMedia(item.getTitle());
                 }
             }
         } catch (IOException e) {

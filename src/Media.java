@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 
 public abstract class Media {
@@ -41,5 +40,8 @@ public abstract class Media {
     public String toString() {
 
         return title + " (" + releaseYear + ") - Rating: " + rating;
+    }
+
+    public void play() {
     }
 }
