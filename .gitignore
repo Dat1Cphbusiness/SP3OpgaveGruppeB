@@ -6,3 +6,6 @@ out/
 data/users.csv
 /test_out
 test_out/*
+target/*
+target
+/target
