@@ -32,16 +32,12 @@ public enum Category {
     }
 
 
-    public static Category fromString (String name) {
+    public static Category fromString (String name) throws IllegalArgumentException {
         String category = name.trim()
                 .toUpperCase()
                 .replace("-", "_")
                 .replace (" ", "_");
-        try {
-            return Category.valueOf(category);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+        return Category.valueOf(category);
     }
 
     @Override
