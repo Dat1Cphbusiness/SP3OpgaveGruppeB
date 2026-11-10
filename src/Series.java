@@ -6,7 +6,7 @@ public class Series extends Media {
     private ArrayList<Season> seasons;
 
     public Series(String title, int releaseYear, double rating, ArrayList<Category> categories) {
-        super(title, releaseYear, rating, categories);
+        super(title, releaseYear, categories, rating);
         seasons = new ArrayList<>();
     }
 

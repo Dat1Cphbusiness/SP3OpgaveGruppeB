@@ -157,8 +157,13 @@ public class StreamingService {
 
         try {
             String data = FileIO.readData(MOVIE_PATH);
-            String[] lines = data.split("\n");
+            String[] lines = data.split("\\R");
+            int i = 0;
             for (String line : lines) {
+                if (i == 0) {
+                    i++;
+                    continue;
+                }
                 String[] parts = line.split(";");
                 try {
                     String title = parts[0].trim();
@@ -170,6 +175,7 @@ public class StreamingService {
                 } catch (IllegalArgumentException e) {
                     System.out.println("Error: Failed to parse either release_year or rating for movie CSV line: \"" + line + "\"");
                 }
+                i++;
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error: Movies data not found - Movies will appear empty!!");
