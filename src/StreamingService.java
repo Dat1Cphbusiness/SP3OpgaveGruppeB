@@ -1,4 +1,5 @@
-import java.io.File;
+import Helpers.FileIO;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -13,6 +14,7 @@ public class StreamingService {
     private final String SERIES_PATH = "data/SeriesData.csv";
     private final String USERS_PATH = "data/users.csv";
     private final String LISTS_PATH = "data/userLists.csv";
+    private final String USER_WATCHED_PATH = "data/userWatched.csv";
 
     public StreamingService() {
         name = "Streaming Service";
@@ -20,7 +22,7 @@ public class StreamingService {
         media = new ArrayList<>();
         loadMediaData();
         loadUsers();
-        if (!new File(USERS_PATH).exists()) {
+        if (FileIO.fileExists(USERS_PATH)) {
             saveUsers();
         }
     }
@@ -154,14 +156,10 @@ public class StreamingService {
     private void loadMovies() {
 
         try {
-
             String data = FileIO.readData(MOVIE_PATH);
-            String[] lines = data.split("\\R");
+            String[] lines = data.split("\n");
             for (String line : lines) {
                 String[] parts = line.split(";");
-                if (parts.length < 4) {
-                    continue;
-                }
                 try {
                     String title = parts[0].trim();
                     int year = Integer.parseInt(parts[1].trim());
@@ -170,22 +168,20 @@ public class StreamingService {
                     Movie movie = new Movie(title, year, rating, categories);
                     media.add(movie);
                 } catch (IllegalArgumentException e) {
+                    System.out.println("Error: Failed to parse either release_year or rating for movie CSV line: \"" + line + "\"");
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Error: Could not load MovieData.csv");
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: Movies data not found - Movies will appear empty!!");
         }
     }
 
     private void loadSeries() {
         try {
             String data = FileIO.readData(SERIES_PATH);
-            String[] lines = data.split("\\R");
+            String[] lines = data.split("\n");
             for (String line : lines) {
                 String[] parts = line.split(";");
-                if (parts.length < 4) {
-                    continue;
-                }
                 try {
                     String title = parts[0].trim();
                     String yearText = parts[1].trim();
@@ -239,7 +235,7 @@ public class StreamingService {
                     categories.add(category);
                 }
             } catch (IllegalArgumentException e) {
-
+                System.out.println("Failed to parse category: \"" + value + "\" - Ignoring as failsafe...");
             }
         }
         return categories;

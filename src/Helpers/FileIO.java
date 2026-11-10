@@ -29,4 +29,9 @@ public class FileIO {
         }
         return readData;
     }
+
+    public static boolean fileExists(String path)
+    {
+        return !new File(path).exists();
+    }
 }
