@@ -17,6 +17,7 @@ public class FileIO {
             return;
         }
         writer.write(data);
+        writer.close();
     }
 
     public static String readData(String path) throws FileNotFoundException
@@ -25,13 +26,22 @@ public class FileIO {
         String readData = "";
         while(scan.hasNextLine())
         {
-            readData += scan.nextLine();
+            readData += scan.nextLine() + "\n";
         }
+        scan.close();
         return readData;
     }
 
     public static boolean fileExists(String path)
     {
-        return !new File(path).exists();
+        return new File(path).exists();
+    }
+
+    public static void createEmptyFile(String path) throws IOException
+    {
+        if(!FileIO.fileExists(path))
+        {
+            FileIO.writeData(path,"",false);
+        }
     }
 }
