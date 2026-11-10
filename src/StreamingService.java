@@ -2,6 +2,7 @@ import Helpers.FileIO;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,17 +15,23 @@ public class StreamingService {
     private final String SERIES_PATH = "data/SeriesData.csv";
     private final String USERS_PATH = "data/users.csv";
     private final String LISTS_PATH = "data/userLists.csv";
-    private final String USER_WATCHED_PATH = "data/userWatched.csv";
 
     public StreamingService() {
         name = "Streaming Service";
         users = new ArrayList<>();
         media = new ArrayList<>();
+        if (!FileIO.fileExists(USERS_PATH)) {
+            try {
+                FileIO.createEmptyFile(USERS_PATH);
+            }
+            catch (IOException e)
+            {
+                System.out.println("Error creating \"" + USERS_PATH + "\" - Users will not be saved!!!");
+            }
+        }
         loadMediaData();
         loadUsers();
-        if (FileIO.fileExists(USERS_PATH)) {
-            saveUsers();
-        }
+
     }
 
     // ------------------------------
@@ -101,6 +108,32 @@ public class StreamingService {
         return results;
     }
 
+    public ArrayList<Movie> browseMovies()
+    {
+        ArrayList<Movie> movies = new ArrayList<>();
+
+        ArrayList<Media> tmpMovies = new ArrayList<>();
+        tmpMovies.addAll(media.stream().filter(m -> m instanceof Movie).toList());
+        for(int i = 0; i < tmpMovies.size(); i++)
+        {
+            movies.add((Movie)tmpMovies.get(i));
+        }
+        return movies;
+    }
+
+    public ArrayList<Series> browseSeries()
+    {
+        ArrayList<Series> series = new ArrayList<>();
+
+        ArrayList<Media> tmpSeries = new ArrayList<>();
+        tmpSeries.addAll(media.stream().filter(m -> m instanceof Series).toList());
+        for(int i = 0; i < tmpSeries.size(); i++)
+        {
+            series.add((Series)tmpSeries.get(i));
+        }
+        return series;
+    }
+
     // ------------------------------
     // WATCHED MEDIA
     // ------------------------------
@@ -157,14 +190,14 @@ public class StreamingService {
 
         try {
             String data = FileIO.readData(MOVIE_PATH);
-            String[] lines = data.split("\\R");
-            int i = 0;
-            for (String line : lines) {
-                if (i == 0) {
-                    i++;
-                    continue;
-                }
-                String[] parts = line.split(";");
+            String[] lines = data.split("\n");
+            if(lines.length <= 1)
+            {
+                System.out.println("Only header available in moviesdata file - Skipping movie loading...");
+                return;
+            }
+            for (int i = 1; i < lines.length; i++) {
+                String[] parts = lines[i].split(";");
                 try {
                     String title = parts[0].trim();
                     int year = Integer.parseInt(parts[1].trim());
@@ -173,9 +206,8 @@ public class StreamingService {
                     Movie movie = new Movie(title, year, rating, categories);
                     media.add(movie);
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Error: Failed to parse either release_year or rating for movie CSV line: \"" + line + "\"");
+                    System.out.println("Error: Failed to parse either release_year or rating for movie CSV line: \"" + lines[i] + "\"");
                 }
-                i++;
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error: Movies data not found - Movies will appear empty!!");
@@ -186,8 +218,13 @@ public class StreamingService {
         try {
             String data = FileIO.readData(SERIES_PATH);
             String[] lines = data.split("\n");
-            for (String line : lines) {
-                String[] parts = line.split(";");
+            if(lines.length <= 1)
+            {
+                System.out.println("Only header in datafile - Skipping series loading...");
+                return;
+            }
+            for (int i = 1; i < lines.length; i++) {
+                String[] parts = lines[i].split(";");
                 try {
                     String title = parts[0].trim();
                     String yearText = parts[1].trim();
@@ -205,16 +242,16 @@ public class StreamingService {
                     // Find season and episode information.
 
                     StringBuilder seasonData = new StringBuilder();
-                    for(int i = 4; i < parts.length; i++){
-                        seasonData.append(parts[i]).append(" ");
+                    for(int u = 4; u < parts.length; u++){
+                        seasonData.append(parts[u]).append(" ");
                     }
                     Matcher matcher = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)").matcher(seasonData.toString());
                     while (matcher.find()) {
                         int seasonNumber = Integer.parseInt(matcher.group(1));
                         int episodeNumber = Integer.parseInt(matcher.group(2));
                         Season season = new Season (seasonNumber);
-                        for (int i = 1; i <= episodeNumber; i++) {
-                            season.addEpisode(new Episode(i));
+                        for (int u = 1; u <= episodeNumber; u++) {
+                            season.addEpisode(new Episode(u));
                         }
                         series.addSeason(season);
                     }
@@ -253,9 +290,14 @@ public class StreamingService {
     private void loadUsers() {
         try {
             String data = FileIO.readData(USERS_PATH);
-            String[] lines = data.split("\\R");
-            for (String line : lines) {
-                String[] parts = line.split(";");
+            String[] lines = data.split("\n");
+            if(lines.length <= 1)
+            {
+                System.out.println("Userdata file only has header - Skipping userload...");
+                return;
+            }
+            for (int i = 1; i < lines.length; i++) {
+                String[] parts = lines[i].split(";");
                 if (parts.length != 2) {
                     continue;
                 }
@@ -275,11 +317,12 @@ public class StreamingService {
     //------------------------------
     private void saveUsers() {
         StringBuilder data = new StringBuilder();
+        data.append("username;password\n");
         for (User user : users) {
             data.append(user.getUsername())
                     .append(";")
                     .append(user.getPassword())
-                    .append(System.lineSeparator());
+                    .append("\n");
         }
         try {
             FileIO.writeData(USERS_PATH, data.toString(), false);
@@ -292,20 +335,20 @@ public class StreamingService {
     // SAVE USER LIST/DATA
     //------------------------------
     public void saveUserData() {
-        saveUsers();
         StringBuilder data = new StringBuilder();
+        data.append("username;list_type;title\n");
         for (User user : users) {
             for (String item : user.getWatchList()) {
                 data.append(user.getUsername())
                         .append(";WATCHED;")
                         .append(item)
-                        .append(System.lineSeparator());
+                        .append("\n");
             }
             for (String item : user.getSavedList()) {
                 data.append(user.getUsername())
                         .append(";SAVED;")
                         .append(item)
-                        .append(System.lineSeparator());
+                        .append("\n");
             }
         }
 
@@ -322,7 +365,7 @@ public class StreamingService {
     private void loadUserLists() {
         try {
             String data = FileIO.readData(LISTS_PATH);
-            String[] lines = data.split("\\R");
+            String[] lines = data.split("\n");
             for (String line : lines) {
                 String[] parts = line.split(";");
                 if (parts.length != 3) {
