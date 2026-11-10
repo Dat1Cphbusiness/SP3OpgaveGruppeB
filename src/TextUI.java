@@ -1,11 +1,10 @@
 import java.util.Scanner;
 
 public class TextUI {
-//private StreamingService streamingService;
+private StreamingService streamingService;
 private Scanner input = new Scanner(System.in);
 
 boolean shutdown = false;
-
 
 private void showBrowseOptions(){
 
