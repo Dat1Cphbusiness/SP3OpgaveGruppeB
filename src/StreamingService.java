@@ -41,6 +41,7 @@ public class StreamingService {
         currentUser = newUser;
         saveUsers();
         return true;
+
     }
 
     public boolean login(String username, String password) {
