@@ -146,9 +146,38 @@ public class StreamingService {
         saveUserData();
     }
 
+    public Arraylist<Media> getWatchedMedia() {
+        Arraylist<Media> result = new Arraylist<>();
+        if (currentUser == null) {
+            return result;
+        }
+        for (String title : currentUser.getWatchlist()) {
+            Media item = findMediaByTitle(title);
+            if (item != null) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
     // ------------------------------
     // SAVED MEDIA
     // ------------------------------
+
+    public Arraylist<Media> getSavedList() {
+        Arraylist<Media> result = new Arraylist();
+        if (currentUser == null) {
+            return result;
+        }
+        for (String title : currentUser.getSavedList()) {
+            Media item = findMediaByTitle(title)
+            if (item != null) {
+                result.add(item)
+            }
+        }
+        return result;
+    }
+
     public boolean saveMedia(Media item) {
         if (currentUser == null || item == null) return false;
         boolean saved = currentUser.saveMedia(item.getTitle());
