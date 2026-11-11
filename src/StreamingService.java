@@ -149,20 +149,23 @@ public class StreamingService {
     // ------------------------------
     // SAVED MEDIA
     // ------------------------------
-    public void saveMedia(Media item) {
-        if (currentUser == null) {
-            return;
-        }
-        currentUser.saveMedia(item.getTitle());
-        saveUserData();
+    public boolean saveMedia(Media item) {
+        if (currentUser == null || item == null) return false;
+        boolean saved = currentUser.saveMedia(item.getTitle());
+        if (saved) saveUserData();
+        return saved;
     }
 
-    public void removeSavedMedia(Media item) {
-        if (currentUser == null) {
-            return;
-        }
-        currentUser.unsaveMedia(item.getTitle());
-        saveUserData();
+    public boolean removeSavedMedia(Media item) {
+        if (currentUser == null || item == null) return false;
+        boolean removed = currentUser.unsaveMedia(item.getTitle());
+        if (removed) saveUserData();
+        return removed;
+    }
+
+    public boolean isMediaSaved(Media item) {
+        return currentUser != null && item != null
+                && currentUser.getSavedList().contains(item.getTitle());
     }
 
     // ------------------------------
