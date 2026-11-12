@@ -1,8 +1,8 @@
 import Helpers.FileIO;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,9 +23,7 @@ public class StreamingService {
         if (!FileIO.fileExists(USERS_PATH)) {
             try {
                 FileIO.createEmptyFile(USERS_PATH);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 System.out.println("Error creating \"" + USERS_PATH + "\" - Users will not be saved!!!");
             }
         }
@@ -108,28 +106,24 @@ public class StreamingService {
         return results;
     }
 
-    public ArrayList<Movie> browseMovies()
-    {
+    public ArrayList<Movie> browseMovies() {
         ArrayList<Movie> movies = new ArrayList<>();
 
         ArrayList<Media> tmpMovies = new ArrayList<>();
         tmpMovies.addAll(media.stream().filter(m -> m instanceof Movie).toList());
-        for(int i = 0; i < tmpMovies.size(); i++)
-        {
-            movies.add((Movie)tmpMovies.get(i));
+        for (int i = 0; i < tmpMovies.size(); i++) {
+            movies.add((Movie) tmpMovies.get(i));
         }
         return movies;
     }
 
-    public ArrayList<Series> browseSeries()
-    {
+    public ArrayList<Series> browseSeries() {
         ArrayList<Series> series = new ArrayList<>();
 
         ArrayList<Media> tmpSeries = new ArrayList<>();
         tmpSeries.addAll(media.stream().filter(m -> m instanceof Series).toList());
-        for(int i = 0; i < tmpSeries.size(); i++)
-        {
-            series.add((Series)tmpSeries.get(i));
+        for (int i = 0; i < tmpSeries.size(); i++) {
+            series.add((Series) tmpSeries.get(i));
         }
         return series;
     }
@@ -146,12 +140,12 @@ public class StreamingService {
         saveUserData();
     }
 
-    public Arraylist<Media> getWatchedMedia() {
-        Arraylist<Media> result = new Arraylist<>();
+    public ArrayList<Media> getWatchedMedia() {
+        ArrayList<Media> result = new ArrayList<>();
         if (currentUser == null) {
             return result;
         }
-        for (String title : currentUser.getWatchlist()) {
+        for (String title : currentUser.getWatchList()) {
             Media item = findMediaByTitle(title);
             if (item != null) {
                 result.add(item);
@@ -164,15 +158,15 @@ public class StreamingService {
     // SAVED MEDIA
     // ------------------------------
 
-    public Arraylist<Media> getSavedList() {
-        Arraylist<Media> result = new Arraylist();
+    public ArrayList<Media> getSavedMedia() {
+        ArrayList<Media> result = new ArrayList();
         if (currentUser == null) {
             return result;
         }
         for (String title : currentUser.getSavedList()) {
-            Media item = findMediaByTitle(title)
+            Media item = findMediaByTitle(title);
             if (item != null) {
-                result.add(item)
+                result.add(item);
             }
         }
         return result;
@@ -223,8 +217,7 @@ public class StreamingService {
         try {
             String data = FileIO.readData(MOVIE_PATH);
             String[] lines = data.split("\n");
-            if(lines.length <= 1)
-            {
+            if (lines.length <= 1) {
                 System.out.println("Only header available in moviesdata file - Skipping movie loading...");
                 return;
             }
@@ -250,8 +243,7 @@ public class StreamingService {
         try {
             String data = FileIO.readData(SERIES_PATH);
             String[] lines = data.split("\n");
-            if(lines.length <= 1)
-            {
+            if (lines.length <= 1) {
                 System.out.println("Only header in datafile - Skipping series loading...");
                 return;
             }
@@ -262,7 +254,7 @@ public class StreamingService {
                     String yearText = parts[1].trim();
                     Matcher yearMatcher = Pattern.compile("\\d{4}").matcher(yearText);
 
-                    if(!yearMatcher.find()) {
+                    if (!yearMatcher.find()) {
                         continue;
                     }
                     int year = Integer.parseInt(yearMatcher.group());
@@ -274,14 +266,14 @@ public class StreamingService {
                     // Find season and episode information.
 
                     StringBuilder seasonData = new StringBuilder();
-                    for(int u = 4; u < parts.length; u++){
+                    for (int u = 4; u < parts.length; u++) {
                         seasonData.append(parts[u]).append(" ");
                     }
                     Matcher matcher = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)").matcher(seasonData.toString());
                     while (matcher.find()) {
                         int seasonNumber = Integer.parseInt(matcher.group(1));
                         int episodeNumber = Integer.parseInt(matcher.group(2));
-                        Season season = new Season (seasonNumber);
+                        Season season = new Season(seasonNumber);
                         for (int u = 1; u <= episodeNumber; u++) {
                             season.addEpisode(new Episode(u));
                         }
@@ -303,7 +295,7 @@ public class StreamingService {
     private ArrayList<Category> parseCategories(String data) {
         ArrayList<Category> categories = new ArrayList<>();
         String[] values = data.split(",");
-        for(String value : values) {
+        for (String value : values) {
             try {
                 Category category = Category.fromString(value);
                 if (!categories.contains(category)) {
@@ -323,8 +315,7 @@ public class StreamingService {
         try {
             String data = FileIO.readData(USERS_PATH);
             String[] lines = data.split("\n");
-            if(lines.length <= 1)
-            {
+            if (lines.length <= 1) {
                 System.out.println("Userdata file only has header - Skipping userload...");
                 return;
             }
@@ -431,5 +422,4 @@ public class StreamingService {
             System.out.println("No previous user lists found.");
         }
     }
-
 }
